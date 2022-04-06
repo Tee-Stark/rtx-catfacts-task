@@ -1,9 +1,9 @@
 import knex from 'knex';
-import config from '../config';
+import config from '../config.js';
 
-import knexfile from '../knexfile';
+import knexfile from '../knexfile.js';
 
 const env = config.service.env || "development";
 const configOptions = knexfile[env];
 
-module.exports = knex(configOptions);
+export default knex(configOptions);
