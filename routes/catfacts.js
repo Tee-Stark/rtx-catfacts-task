@@ -85,3 +85,46 @@ export async function addNewFact(req, res, next) {
   }
 }
 
+// to get single fact from local database
+export async function getSingleFact(req, res, next) {
+  try {
+    const id = req.params.id;
+    const fact = await catFacts.getFactFromLocal(id);
+    if (!fact || fact.length <= 0) {
+      return res.status(404).send({
+        message: 'No cat fact with this id found in local database'
+      });
+    }
+    return res.status(200).send({
+      message: 'Cat fact return successfully',
+      data: fact
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error getting cat fact from local database',
+      error: err
+    });
+  }
+}
+
+export async function updateFact(req, res, next) {
+  try {
+    const id = req.params.id;
+    const updates = req.body;
+    const updatedFact = await catFacts.updateFact(id, updates);
+    if (!updatedFact || updatedFact.length <= 0) {
+      return res.status(404).send({
+        message: 'Cat fact does not exist in local database'
+      });
+    }
+    return res.status(200).send({
+      message: 'Cat fact updated successfully',
+      data: updatedFact
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error updating cat fact in local database',
+      error: err
+    });
+  }
+}  

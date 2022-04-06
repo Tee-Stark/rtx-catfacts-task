@@ -44,7 +44,7 @@ export default class CatFacts {
     }
   
     // get a single fact from local database
-    async getFactFromLocal(id) {
+    static async getFactFromLocal(id) {
       try {
         const catFact = await db('cat_facts').where({ object_id: id }).first();
         if(catFact !== null) {
@@ -58,11 +58,11 @@ export default class CatFacts {
       }
     }
     // update cat fact in local database
-    async updateFact(updates) {
+    static async updateFact(id, updates) {
       try {
-        const checkExists = await db('cat_facts').where({ id: this.id }).first();
+        const checkExists = await db('cat_facts').where({ id }).first();
         if(checkExists) {
-          const catFact = await db('cat_facts').where({ id: this.id }).update(updates, 'id');
+          const catFact = await db('cat_facts').where({ id }).update(updates, 'id');
           return await db('cat_facts').where({id: catFact}).first();
         }
       } catch (err) {
@@ -72,11 +72,11 @@ export default class CatFacts {
     }
   
     // delete cat fact from local database
-    async deleteFact() {
+    static async deleteFact(id) {
       try {
-        const catFact = await db('cat_facts').where({ id: this.id }).first();
+        const catFact = await db('cat_facts').where({ id }).first();
         if(catFact !== null) {
-          const deleted = await db('cat_facts').where({ id: this.id }).del();
+          const deleted = await db('cat_facts').where({ id }).del();
           return deleted;
         } else {
           return { 'error': 'Cat fact does not exist' };
@@ -86,5 +86,6 @@ export default class CatFacts {
         throw new Error(err);
       }
     }
+
   }
   
