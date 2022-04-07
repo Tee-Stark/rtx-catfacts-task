@@ -8,7 +8,7 @@ export async function getFromAPI (req, res, next) {
     // Call handler to response with data
     const facts = await catFacts.getListFromAPI();
     if (facts.error || facts.length <= 0) {
-      return res.status(404).send({
+      return res.status(404).json({
         message: 'No cat facts returned from API'
       });
     }
@@ -37,7 +37,7 @@ export async function getFromAPI (req, res, next) {
           data: newFacts
         });
       } else {
-        return res.status(500).send({
+        return res.status(501).json({
           message: 'Unable to save cat facts to database from API',
         });
       }
