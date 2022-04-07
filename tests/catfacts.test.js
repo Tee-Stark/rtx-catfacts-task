@@ -1,8 +1,26 @@
-// import { describe } from 'eslint/lib/rule-tester/rule-tester';
 import supertest from 'supertest';
 import app from '../index';
+import db from '../data/'
 
 const request = supertest(app);
+
+jest.mock('knex', () => {
+  const fn = () => {
+      return {
+          select: jest.fn().mockReturnThis(),
+          from: jest.fn().mockReturnThis(),
+          where: jest.fn().mockReturnThis(),
+          first: jest.fn().mockReturnThis(),
+          insert: jest.fn().mockReturnThis(),
+          raw: jest.fn().mockReturnThis(),
+          then: jest.fn(function (done) {
+            done(null)
+          })
+          
+      }
+  }
+  return fn
+})
 
 describe('The index route', () => {
   it('should welcome user to nothingness', async () => {
