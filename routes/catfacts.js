@@ -7,7 +7,7 @@ export async function getFromAPI (req, res, next) {
   try {
     // Call handler to response with data
     const facts = await catFacts.getListFromAPI();
-    if (!facts || facts.length <= 0) {
+    if (facts.error || facts.length <= 0) {
       return res.status(404).send({
         message: 'No cat facts returned from API'
       });
@@ -43,7 +43,7 @@ export async function getFromLocal (req, res, next) {
   try {
     // Call handler to response with data
     const facts = await catFacts.getListFromLocal();
-    if (!facts || facts.length <= 0) {
+    if (facts.error || facts.length <= 0) {
       return res.status(404).send({
         message: 'No cat facts found in local database'
       });
@@ -67,7 +67,7 @@ export async function addNewFact(req, res, next) {
   try {
     const newFact = new catFacts(req.body);
     const addedFact = await newFact.createCatFact();
-    if (!addedFact || addedFact.length <= 0) {
+    if (addedFact.error || addedFact.length <= 0) {
       return res.status(400).send({
         message: 'Cat fact wasnt added to database'
       });
@@ -89,7 +89,7 @@ export async function getSingleFact(req, res, next) {
   try {
     const id = req.params.id;
     const fact = await catFacts.getFactFromLocal(id);
-    if (!fact || fact.length <= 0) {
+    if (fact.error || fact.length <= 0) {
       return res.status(404).send({
         message: 'No cat fact with this id found in local database'
       });
@@ -134,7 +134,7 @@ export async function deleteFact(req, res, next) {
   try {
     const id = req.params.id;
     const deletedFact = await catFacts.deleteFact(id);
-    if (!deletedFact || deletedFact.length <= 0) {
+    if (deletedFact.error || deletedFact.length <= 0) {
       return res.status(404).send({
         message: 'Cat fact does not exist in local database'
       });

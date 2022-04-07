@@ -107,7 +107,7 @@ export default class CatFacts {
        'content-type': 'application/json'
      }
    }).catch(err => {
-     console.log('Some error!');
+     console.error(err);
      throw err
    })
    // Return response from external API in JSON format
