@@ -1,5 +1,6 @@
 import db from "../data/db.js";
-
+import fetch from "node-fetch";
+import config from "../config.js";
 export default class CatFacts {
   // construct new cat fact object using data from external API
   constructor(catFact) {
@@ -31,12 +32,14 @@ export default class CatFacts {
         const checkExists = await db("cat_facts")
           .where({ object_id: catFactObj.object_id })
           .first();
+        // console.log(checkExists)
         if (!checkExists || checkExists === null) {
           // if fact does not exist in database
-          const catFact = await db("cat_facts").insert(catFactObj, "id");
-          console.log(catFact);
-          return await db("cat_facts").where({ id: catFact }).first();
+          const id = await db("cat_facts").insert(catFactObj, "id");
+          console.log(id);
+          return await db("cat_facts").where({ id }).first();
         } else {
+          console.log("Fact already exists");
           return { error: "Cat fact already exists" };
         }
       }
@@ -49,8 +52,8 @@ export default class CatFacts {
   // get a single fact from local database
   static async getFactFromLocal(id) {
     try {
-      const catFact = await db("cat_facts").where({ object_id: id }).first();
-      if (catFact !== null) {
+      const catFact = await db("cat_facts").where({ id }).first();
+      if (catFact !== undefined) {
         return catFact;
       } else {
         return { error: "Cat fact does not exist" };
