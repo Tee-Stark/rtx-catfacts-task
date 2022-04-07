@@ -32,9 +32,9 @@ export default class CatFacts {
         // console.log(checkExists)
         if (!checkExists || checkExists[0] === undefined) {
           // if fact does not exist in database
-          const id = await db("cat_facts").insert(catFactObj, "id");
+          const [id] = await db("cat_facts").insert(catFactObj, "id");
           // console.log(id);
-          return await db("cat_facts").where({ id: id[0] }).first();
+          return await db("cat_facts").where({ id }).first();
         } else {
           console.log("Fact already exists");
           return { error: "Cat fact already exists" };
@@ -65,10 +65,10 @@ export default class CatFacts {
     try {
       const checkExists = await db("cat_facts").where({ id }).first();
       if (checkExists) {
-        const catFact = await db("cat_facts")
+        const [fact_id] = await db("cat_facts")
           .where({ id })
           .update(updates, "id");
-        return await db("cat_facts").where({ id: catFact[0] }).first();
+        return await db("cat_facts").where({ id: fact_id }).first();
       }
     } catch (err) {
       console.log(err);
