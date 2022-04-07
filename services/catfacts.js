@@ -4,13 +4,13 @@ import config from "../config.js";
 export default class CatFacts {
   // construct new cat fact object using data from external API
   constructor(catFact) {
-    this.object_id = String(catFact._id);
+    this.object_id = String(catFact._id) || "null";
     this.user = String(catFact.user);
     this.source = catFact.source;
-    this.originally_created = String(catFact.createdAt);
-    this.last_updated = String(catFact.updatedAt);
-    this.deleted = catFact.deleted;
-    this.used = catFact.used;
+    this.originally_created = String(catFact.createdAt || new Date().toISOString());
+    this.last_updated = String(catFact.updatedAt || new Date().toISOString());
+    this.deleted = catFact.deleted || false;
+    this.used = catFact.used || false;
     this.text = catFact.text;
   }
 
@@ -23,21 +23,18 @@ export default class CatFacts {
         source: this.source,
         originally_created: this.originally_created,
         last_updated: this.last_updated,
-        deleted: this.deleted,
-        used: this.used,
         text: this.text,
       };
       if (catFactObj !== null) {
         // check if fact already exists in database
         const checkExists = await db("cat_facts")
-          .where({ object_id: catFactObj.object_id })
-          .first();
+          .where({ text: catFactObj.text });
         // console.log(checkExists)
-        if (!checkExists || checkExists === null) {
+        if (!checkExists || checkExists[0] === undefined) {
           // if fact does not exist in database
           const id = await db("cat_facts").insert(catFactObj, "id");
-          console.log(id);
-          return await db("cat_facts").where({ id }).first();
+          // console.log(id);
+          return await db("cat_facts").where({ id: id[0] }).first();
         } else {
           console.log("Fact already exists");
           return { error: "Cat fact already exists" };
@@ -71,7 +68,7 @@ export default class CatFacts {
         const catFact = await db("cat_facts")
           .where({ id })
           .update(updates, "id");
-        return await db("cat_facts").where({ id: catFact }).first();
+        return await db("cat_facts").where({ id: catFact[0] }).first();
       }
     } catch (err) {
       console.log(err);

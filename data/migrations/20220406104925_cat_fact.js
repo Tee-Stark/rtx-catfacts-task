@@ -1,7 +1,7 @@
 
 // migration to postresql database --- creates tables in the database
-export function up (knex){
-    knex.schema.createTable('cat_facts', tbl => {
+export async function up (knex){
+    return await knex.schema.createTable('cat_facts', tbl => {
         tbl.increments('id').primary();               // primary key -> id
         tbl.string('object_id', 30).notNullable();    // object id of cat fact gotten as primary Id from external API
         tbl.string('user', 50).notNullable();         // object ID of user who posted the cat fact
@@ -16,5 +16,5 @@ export function up (knex){
 };
 
 export function down (knex) {
-    knex.schema.dropTableIfExists('users')
+    return knex.schema.dropTableIfExists('users')
 };

@@ -12,14 +12,18 @@ export async function getFromAPI (req, res, next) {
         message: 'No cat facts returned from API'
       });
     }
+    let newFacts = []
     // save cat facts to database
     try {
-        facts.foreach(async fact => {
-        const newFact = new catFacts(fact);
-        const createdFact = await newFact.createCatFact();
-        return createdFact
-      })
-      let errors = facts.filter(fact => fact.error); // filter out errors
+      for(let fact of facts) {
+          fact = new catFacts(fact);
+          fact = await fact.createCatFact();
+          newFacts.push(fact);
+          console.log(fact)
+      }
+      console.log(newFacts)
+      let errors = newFacts.filter(fact => fact.error); // filter out errors
+      console.log("Number of errors ", errors.length)
       // ensure that all facts were saved, and return the saved facts
       if (errors.length > 0) {
         return res.status(400).send({
@@ -27,10 +31,10 @@ export async function getFromAPI (req, res, next) {
           error: errors
         });
       }
-      else if(facts.length > 0) {
+      else if(newFacts.length > 0) {
         return res.status(200).send({
           message: 'Cat facts found and saved to database',
-          data: addedFacts
+          data: newFacts
         });
       } else {
         return res.status(500).send({
