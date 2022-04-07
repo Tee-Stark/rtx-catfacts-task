@@ -1,14 +1,12 @@
 "use strict";
 
-// import { Router } from 'express';
-import { getListFromAPI, getListFromLocal } from './handlers/catfactsHandler.js';
 import catFacts from '../services/catfacts.js';
 
-// function to get cat facts from the External API and save them to the database
+// controller to get cat facts from the External API and save them to the database
 export async function getFromAPI (req, res, next) {
   try {
     // Call handler to response with data
-    const facts = await getListFromAPI();
+    const facts = await catFacts.getListFromAPI();
     if (!facts || facts.length <= 0) {
       return res.status(404).send({
         message: 'No cat facts returned from API'
@@ -40,10 +38,11 @@ export async function getFromAPI (req, res, next) {
   }
 }
 
+// controller to get cat facts from the database
 export async function getFromLocal (req, res, next) {
   try {
     // Call handler to response with data
-    const facts = await getListFromLocal();
+    const facts = await catFacts.getListFromLocal();
     if (!facts || facts.length <= 0) {
       return res.status(404).send({
         message: 'No cat facts found in local database'
@@ -107,6 +106,7 @@ export async function getSingleFact(req, res, next) {
   }
 }
 
+// to update cat fact in local database
 export async function updateFact(req, res, next) {
   try {
     const id = req.params.id;
@@ -129,6 +129,7 @@ export async function updateFact(req, res, next) {
   }
 }
 
+// to delete cat fact from local database
 export async function deleteFact(req, res, next) {
   try {
     const id = req.params.id;
