@@ -127,4 +127,25 @@ export async function updateFact(req, res, next) {
       error: err
     });
   }
-}  
+}
+
+export async function deleteFact(req, res, next) {
+  try {
+    const id = req.params.id;
+    const deletedFact = await catFacts.deleteFact(id);
+    if (!deletedFact || deletedFact.length <= 0) {
+      return res.status(404).send({
+        message: 'Cat fact does not exist in local database'
+      });
+    }
+    return res.status(200).send({
+      message: 'Cat fact deleted successfully',
+      data: deletedFact
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error deleting cat fact from local database',
+      error: err
+    });
+  }
+}
