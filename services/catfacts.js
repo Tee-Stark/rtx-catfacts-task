@@ -1,4 +1,4 @@
-import db from "../data/db";
+import db from "../data/db.js";
 
 export default class CatFacts {
   // construct new cat fact object using data from external API
