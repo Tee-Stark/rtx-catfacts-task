@@ -14,24 +14,23 @@ export async function getFromAPI (req, res, next) {
     }
     // save cat facts to database
     try {
-      const alreadyExists = []; // an array to keep track of cat facts that already exist in the database
-      const addedFacts = facts.map(async fact => {
+        facts.foreach(async fact => {
         const newFact = new catFacts(fact);
-        await newFact.createCatFact();
-        if (newFact.error) {
-          alreadyExists.push(newFact.error);
-        }
+        const createdFact = await newFact.createCatFact();
+        return createdFact
       })
+      let errors = facts.filter(fact => fact.error); // filter out errors
       // ensure that all facts were saved, and return the saved facts
-      if(addedFacts.length > 0 && addedFacts.length === facts.length && !addedFacts[0].error) {
+      if (errors.length > 0) {
+        return res.status(400).send({
+          message: 'one or more cat facts already exist in the database or could not be saved',
+          error: errors
+        });
+      }
+      else if(facts.length > 0) {
         return res.status(200).send({
           message: 'Cat facts found and saved to database',
           data: addedFacts
-        });
-      } else if (alreadyExists.length > 0) {
-        return res.status(400).send({
-          message: 'one or more cat facts already exist in the database',
-          error: addedFacts[0].error
         });
       } else {
         return res.status(500).send({
